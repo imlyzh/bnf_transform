@@ -21,7 +21,7 @@ fn main() {
 }
 
 
-#[test]
+// #[test]
 fn test1() {
 	let mut r = File::open("./test/1.bnf").unwrap();
 	let mut buf = String::new();
