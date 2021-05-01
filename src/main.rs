@@ -1,5 +1,6 @@
 mod ast;
 mod parser;
+mod optimize;
 mod gen;
 
 use std::fs::File;
@@ -10,7 +11,7 @@ use crate::parser::*;
 use crate::gen::*;
 
 fn main() {
-	let mut r = File::open("./test/bnf.bnf").unwrap();
+	let mut r = File::open("./doc/bnf.bnf").unwrap();
 	let mut buf = String::new();
 	r.read_to_string(&mut buf).unwrap();
 	let res = parse(&buf);

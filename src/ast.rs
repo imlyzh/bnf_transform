@@ -2,16 +2,16 @@
 
 pub type Unit = Vec<Bind>;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Bind(pub String, pub Option<Expr>);
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Expr (pub Vec<Alternative>);
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Alternative(pub Vec<Term>);
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Term {
 	Symbol(String),
 	Tokens(Token, Option<Token>),
