@@ -25,7 +25,7 @@ group = { "(" ~ expression ~ ")" }
 option = { "[" ~ expression ~ "]" }
 repetition = { "{" ~ expression ~ "}" }
 
-production_name = ${ (!(WHITESPACE  | "." | "=" | "\"" | "\'" | "(" | ")" | "[" | "]" | "{" | "}") ~ ANY)+ }
+production_name = ${ (!(WHITESPACE | "…" | "..." | "." | "|" | "=" | "\"" | "\'" | "(" | ")" | "[" | "]" | "{" | "}") ~ ANY)+ }
 
 token_pair = { token ~ (("…"|"...") ~ token)? }
 
