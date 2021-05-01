@@ -10,7 +10,7 @@ use crate::parser::*;
 use crate::gen::*;
 
 fn main() {
-	let mut r = File::open("./test/1.bnf").unwrap();
+	let mut r = File::open("./test/bnf.bnf").unwrap();
 	let mut buf = String::new();
 	r.read_to_string(&mut buf).unwrap();
 	let res = parse(&buf);

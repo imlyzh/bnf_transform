@@ -1,17 +1,10 @@
 unit = { (!EOI ~ production)* ~ EOI }
 
-production = {
-	production_name ~ "=" ~ expression ~ "."
-}
+production = { production_name ~ "=" ~ expression ~ "." }
 
-expression = {
-	alternative ~ ("|" ~ alternative)*
-}
+expression = { alternative ~ ("|" ~ alternative)* }
 
-alternative = {
-	//term ~ term*
-	term+
-}
+alternative = { term+ }
 
 term =
 	{ production_name

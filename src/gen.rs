@@ -1,5 +1,3 @@
-use std::collections::HashSet;
-
 use crate::ast::*;
 
 pub trait Gen {
@@ -9,7 +7,7 @@ pub trait Gen {
 impl Gen for Term {
     fn gen(&self) -> String {
         match self {
-            Term::Symbol(x) => x.clone(),
+            Term::Symbol(x) => x.to_lowercase(),
 			Term::Group(expr) => format!("({})", expr.gen()),
             Term::Option(expr) => format!("({})?", expr.gen()),
             Term::Repetition(expr) => format!("({})*", expr.gen()),
@@ -44,12 +42,13 @@ impl Gen for Expr {
 
 impl Gen for Bind {
     fn gen(&self) -> String {
+		let name = self.0.to_lowercase();
         let expr = if let Some(expr) = &self.1 {
             expr.gen()
         } else {
             "UNDEFINED".to_string()
         };
-        format!("{} = {{ {} }}", self.0, expr)
+        format!("{} = {{ {} }}", name, expr)
     }
 }
 
