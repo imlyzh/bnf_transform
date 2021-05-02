@@ -11,7 +11,7 @@ use crate::parser::*;
 use crate::gen::*;
 
 fn main() {
-	let mut r = File::open("./doc/bnf.bnf").unwrap();
+	let mut r = File::open("./doc/golang.bnf").unwrap();
 	let mut buf = String::new();
 	r.read_to_string(&mut buf).unwrap();
 	let res = parse(&buf);
@@ -22,7 +22,7 @@ fn main() {
 
 
 // #[test]
-fn test1() {
+fn _test1() {
 	let mut r = File::open("./test/1.bnf").unwrap();
 	let mut buf = String::new();
 	r.read_to_string(&mut buf).unwrap();

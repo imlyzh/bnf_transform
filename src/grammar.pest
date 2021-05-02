@@ -1,28 +1,19 @@
 unit = { (!EOI ~ production)* ~ EOI }
 
-production = { production_name ~ "=" ~ expression? ~ "." }
-
+production = { production_name ~ "=" ~ (expression)? ~ "." }
 expression = { alternative ~ ("|" ~ alternative)* }
-
-alternative = { term+ }
-
-term =
-	{ production_name
-	| token_pair
-	| group
-	| option
-	| repetition
-	}
-
+alternative = { term ~ (term)* }
+term = { production_name | token ~ ("…" ~ token)? | group | option | repetition }
 group = { "(" ~ expression ~ ")" }
 option = { "[" ~ expression ~ "]" }
 repetition = { "{" ~ expression ~ "}" }
 
-production_name = ${ (!(WHITESPACE | "…" | "..." | "." | "|" | "=" | "\"" | "\'" | "(" | ")" | "[" | "]" | "{" | "}") ~ ANY)+ }
+production_name = ${ (!(WHITESPACE | "…" | "..." | "=" | "." | "|" | "\"" | "`" | "(" | ")" | "[" | "]" | "{" | "}") ~ ANY)+ }
 
-token_pair = { token ~ (("…"|"...") ~ token)? }
-
-token = { "\"" ~ (!"\"" ~ ANY)+ ~ "\"" }
+token =
+	{ "\"" ~ (!"\"" ~ ANY)+ ~ "\""
+	| "`" ~ (!"`" ~ ANY)+ ~ "`"
+	}
 
 COMMENT = _{ "/*" ~ (COMMENT | (!"*/" ~ ANY))* ~ "*/" }
 

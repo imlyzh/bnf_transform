@@ -13,8 +13,6 @@ impl Gen for Term {
             Term::Repetition(expr) => format!("({})*", expr.gen()),
             Term::Tokens(left, right) => {
 				if let Some(right) = right {
-					assert_eq!(left.len(), 1);
-					assert_eq!(right.len(), 1);
 					format!("'{}'..'{}'",
 						left.chars().nth(0).unwrap(),
 						right.chars().nth(0).unwrap())

@@ -52,15 +52,15 @@ impl ParseFrom<Rule> for Alternative {
 impl ParseFrom<Rule> for Term {
     fn parse_from(pair: Pair<Rule>) -> Self {
 		debug_assert_eq!(pair.as_rule(), Rule::term);
-		let pair = pair.into_inner().next().unwrap();
+		let mut ps = pair.into_inner();
+		let pair = ps.next().unwrap();
         match pair.as_rule() {
 			Rule::production_name => Self::Symbol(pair.as_str().to_string()),
 			Rule::group => Self::Group(pair.into_inner().next().map(Expr::parse_from).unwrap()),
 			Rule::option => Self::Option(pair.into_inner().next().map(Expr::parse_from).unwrap()),
 			Rule::repetition => Self::Repetition(pair.into_inner().next().map(Expr::parse_from).unwrap()),
-			Rule::token_pair => {
-				let mut ps = pair.into_inner();
-				let a = ps.next().unwrap().as_str().to_string();
+			Rule::token => {
+				let a = pair.as_str().to_string();
 				let b = ps.next().map(|x| x.as_str().to_string());
 				Self::Tokens(a, b)
 			},
