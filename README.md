@@ -1,2 +1,2 @@
 # bnf_transform
-Let pest file transfrom golang spec defined BNF 
+Let BNF file transfrom to pest
