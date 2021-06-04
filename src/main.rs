@@ -5,19 +5,23 @@ mod gen;
 
 use std::fs::File;
 use std::io::prelude::*;
+use std::env;
 
 use crate::parser::*;
 // use crate::ast::*;
 use crate::gen::*;
 
+
+
 fn main() {
-	let mut r = File::open("./doc/golang.bnf").unwrap();
+    let args: Vec<String> = env::args().collect();
+    assert_eq!(args.len()-1, 2);
+	let mut r = File::open(args.get(1).unwrap()).expect("input file open invalid");
 	let mut buf = String::new();
-	r.read_to_string(&mut buf).unwrap();
-	let res = parse(&buf);
-	println!("out: {:?}", res);
-	println!("---------------------------------------------");
-	println!("gen: {}", res.unwrap().gen());
+	r.read_to_string(&mut buf).expect("input file open valid");
+	let res = parse(&buf).expect("is not valid bnf format");
+    let mut w = File::create(args.get(2).unwrap()).expect("output file open invalid");
+	write!(w, "{}", res.gen()).expect("write error");
 }
 
 
