@@ -18,5 +18,5 @@ bnf_transform <bnf-style> <input.bnf> <output.pest>
 ## example
 
 ```sh
-bnf_transform --llir llir.bnf llir.pest
+bnf_transform --golang golang.bnf golang.pest
 ```

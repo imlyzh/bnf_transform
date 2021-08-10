@@ -41,7 +41,11 @@ impl Gen for Alternative {
 impl Gen for Expr {
     fn gen(&self) -> String {
         let r: Vec<String> = self.0.iter().map(Alternative::gen).collect();
-        r.join(" | ")
+        if r.first().unwrap().as_str() == "empty" {
+            format!("({})?", r[1..].join(" | "))
+        } else {
+            r.join(" | ")
+        }
     }
 }
 

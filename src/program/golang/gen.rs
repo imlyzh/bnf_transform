@@ -13,12 +13,12 @@ impl Gen for Term {
             Term::Repetition(expr) => format!("({})*", expr.gen()),
             Term::Tokens(left, right) => {
                 if let Some(right) = right {
-                    format!("{}..{}", left, right)
-                    /*
+                    // format!("{}..{}", left, right)
+                    // /*
                     format!(
                         "'{}'..'{}'",
-                        left.chars().nth(0).unwrap(),
-                        right.chars().nth(0).unwrap()
+                        left.chars().nth(1).unwrap(),
+                        right.chars().nth(1).unwrap()
                     )
                     // */
                 } else {
