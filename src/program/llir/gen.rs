@@ -19,7 +19,12 @@ impl Gen for Term {
                 if let Some(right) = right {
                     format!("{}..{}", left, right)
                 } else {
-                    format!("{}", left)
+                    let r = &left[1..left.len()-1];
+                    if ["\"", "\'", "\\", "\t", "\r"].contains(&r) {
+                        format!("\"\\{}\"", r)
+                    } else {
+                        format!("\"{}\"", r)
+                    }
                 }
             }
         }
