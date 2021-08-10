@@ -12,5 +12,11 @@ Let BNF file transfrom to pest.
 ## who use?
 
 ```sh
-bnf_transform <input.bnf> <output.pest>
+bnf_transform <bnf-style> <input.bnf> <output.pest>
+```
+
+## example
+
+```sh
+bnf_transform --llir llir.bnf llir.pest
 ```
