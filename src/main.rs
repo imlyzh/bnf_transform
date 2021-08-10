@@ -8,6 +8,7 @@ use std::io::prelude::*;
 use std::process::exit;
 
 use crate::program::*;
+use crate::optimize::LeftRecOptimize;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -18,11 +19,12 @@ fn main() {
     if args.get(1).unwrap() == "--golang" {
         let res = golang::parser::parse(&buf).expect("is not valid bnf format");
         let mut w = File::create(args.get(3).unwrap()).expect("output file open invalid");
-        write!(w, "{}", golang::gen::Gen::gen(&res)).expect("write error");
+        write!(w, "{}", golang::gen::Gen::gen(&res.left_rec_optimize())).expect("write error");
     } else if args.get(1).unwrap() == "--llir" {
         let res = llir::parser::parse(&buf).expect("is not valid bnf format");
         let mut w = File::create(args.get(3).unwrap()).expect("output file open invalid");
-        write!(w, "{}", llir::gen::Gen::gen(&res)).expect("write error");
+
+        write!(w, "{}", llir::gen::Gen::gen(&res.left_rec_optimize())).expect("write error");
     } else {
         println!("invalid style prarms");
         exit(-1);

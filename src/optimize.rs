@@ -1,51 +1,58 @@
 use crate::ast::*;
 
-pub trait Optimize {
-    fn optimize(&self) -> Self;
+pub trait LeftRecOptimize {
+    fn left_rec_optimize(self) -> Self;
 }
 
-impl Optimize for Term {
-    fn optimize(&self) -> Self {
-        match self {
-            Term::Group(x) => Term::Group(x.optimize()),
-            Term::Option(x) => Term::Option(x.optimize()),
-            Term::Repetition(x) => Term::Repetition(x.optimize()),
-            _ => self.clone(),
+impl LeftRecOptimize for Bind {
+    fn left_rec_optimize(self) -> Self {
+        let Bind(name, expr) = self;
+        if let Some(expr) = &expr {
+            if let Some(r) = is_left_rec(&name, expr) {
+                return Self(name, Some(Expr(vec![r])));
+            }
         }
+        Self(name, expr)
     }
 }
 
-impl Optimize for Alternative {
-    fn optimize(&self) -> Self {
-        let r = Alternative(self.0.iter().map(Term::optimize).collect());
-        if self.0.len() != 2 {
-            return r;
+fn is_left_rec(name: &String, expr: &Expr) -> Option<Alternative> {
+    // Type | TypeList ~ "," ~ Type
+    if expr.0.len() != 2 {
+        return None;
+    }
+    // Type
+    let first = expr.0.first().unwrap();
+    if first.0.len() != 1 {
+        return None;
+    }
+    // Type
+    let first = first.0.first().unwrap();
+    // TypeList ~ "," ~ Type
+    let last_line = expr.0.last().unwrap();
+    if last_line.0.len() <= 1 {
+        return None;
+    }
+    // TypeList
+    if let Term::Symbol(sym) = last_line.0.first().unwrap() {
+        if sym != name {
+            return None;
         }
-        let _c0 = self.0.get(0).unwrap();
-        let c1 = self.0.get(0).unwrap();
-        if let Term::Repetition(_x) = c1 {
-            todo!("太麻烦了不想写了，跑了")
-        } else {
-            return r;
-        }
+    } else {
+        return None;
+    }
+    // "," ~ Type
+    let r = &last_line.0[1..].to_vec();
+    // ("," ~ Type)*
+    let r = Term::Repetition(Expr(vec![Alternative(r.clone())]));
+    // Type ~ ("," ~ Type)*
+    Some(Alternative(vec![first.clone(), r]))
+}
+
+impl LeftRecOptimize for Unit {
+    fn left_rec_optimize(self) -> Self {
+        self.into_iter().map(Bind::left_rec_optimize).collect()
     }
 }
 
-impl Optimize for Expr {
-    fn optimize(&self) -> Self {
-        Self(self.0.iter().map(Alternative::optimize).collect())
-    }
-}
 
-impl Optimize for Bind {
-    fn optimize(&self) -> Self {
-        let expr = self.1.clone().map(|x| Expr::optimize(&x));
-        Self(self.0.clone(), expr)
-    }
-}
-
-impl Optimize for Unit {
-    fn optimize(&self) -> Self {
-        self.iter().map(Bind::optimize).collect()
-    }
-}
