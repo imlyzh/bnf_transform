@@ -55,4 +55,62 @@ impl LeftRecOptimize for Unit {
     }
 }
 
+pub trait OneOrMoreOptimize {
+    fn one_or_more_optimize(self) -> Self;
+}
 
+impl OneOrMoreOptimize for Unit {
+    fn one_or_more_optimize(self) -> Self {
+        self.into_iter().map(Bind::one_or_more_optimize).collect()
+    }
+}
+
+impl OneOrMoreOptimize for Bind {
+    fn one_or_more_optimize(self) -> Self {
+        Self(self.0, self.1.map(Expr::one_or_more_optimize))
+    }
+}
+
+impl OneOrMoreOptimize for Expr {
+    fn one_or_more_optimize(self) -> Self {
+        let r = self.0.into_iter().map(Alternative::one_or_more_optimize).collect();
+        Self(r)
+    }
+}
+
+impl OneOrMoreOptimize for Alternative {
+    fn one_or_more_optimize(self) -> Self {
+        let r: Vec<Term> = self.0.into_iter().map(Term::one_or_more_optimize).collect();
+        if r.len() != 2 {
+            return Self(r);
+        }
+        let first = r.first().unwrap();
+        if let Term::Repetition(last) = r.last().unwrap() {
+            if last.0.len() != 1 {
+                return Self(r);
+            }
+            let unboxed_last = last.0.first().unwrap();
+            if last.0.len() != 1 {
+                return Self(r);
+            }
+            let unboxed_last = unboxed_last.0.first().unwrap();
+            if first == unboxed_last {
+                // let expr = Expr(vec![Alternative(vec![first.clone()])]);
+                return Self(vec![Term::OneOrMore(last.clone())]);
+            }
+        }
+        Self(r)
+    }
+}
+
+impl OneOrMoreOptimize for Term {
+    fn one_or_more_optimize(self) -> Self {
+        match self {
+            Term::Group(expr) => Term::Group(expr.one_or_more_optimize()),
+            Term::Option(expr) => Term::Option(expr.one_or_more_optimize()),
+            Term::Repetition(expr) => Term::Repetition(expr.one_or_more_optimize()),
+            Term::OneOrMore(expr) => Term::OneOrMore(expr.one_or_more_optimize()),
+            _ => self
+        }
+    }
+}

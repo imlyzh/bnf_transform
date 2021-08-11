@@ -16,6 +16,7 @@ pub enum Term {
     Group(Expr),
     Option(Expr),
     Repetition(Expr),
+    OneOrMore(Expr),
 }
 
 pub type Token = String;

@@ -7,10 +7,11 @@ pub trait Gen {
 impl Gen for Term {
     fn gen(&self) -> String {
         match self {
-            Term::Symbol(x) => x.to_lowercase(),
+            Term::Symbol(x) => x.clone(),
             Term::Group(expr) => format!("({})", expr.gen()),
             Term::Option(expr) => format!("({})?", expr.gen()),
             Term::Repetition(expr) => format!("({})*", expr.gen()),
+            Term::OneOrMore(expr) => format!("({})+", expr.gen()),
             Term::Tokens(left, right) => {
                 if let Some(right) = right {
                     // format!("{}..{}", left, right)
@@ -49,7 +50,7 @@ impl Gen for Expr {
 
 impl Gen for Bind {
     fn gen(&self) -> String {
-        let name = self.0.to_lowercase();
+        let name = self.0.clone();
         let expr = if let Some(expr) = &self.1 {
             expr.gen()
         } else {

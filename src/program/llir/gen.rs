@@ -12,9 +12,14 @@ impl Gen for Term {
             } else {
                 x.as_str()
             }.to_string(),
-            Term::Group(expr) => format!("({})", expr.gen()),
-            Term::Option(expr) => format!("({})?", expr.gen()),
-            Term::Repetition(expr) => format!("({})*", expr.gen()),
+            Term::Option(expr) => {
+                let r = expr.gen();
+                if r.contains(" ") {
+                    format!("({})?", r)
+                } else {
+                    format!("{}?", r)
+                }
+            },
             Term::Tokens(left, right) => {
                 if let Some(right) = right {
                     format!("{}..{}", left, right)
@@ -27,6 +32,30 @@ impl Gen for Term {
                     }
                 }
             }
+            Term::Group(expr) => {
+                let r = expr.gen();
+                if r.contains(" ") {
+                    format!("({})", r)
+                } else {
+                    r
+                }
+            },
+            Term::Repetition(expr) => {
+                let r = expr.gen();
+                if r.contains(" ") {
+                    format!("({})*", r)
+                } else {
+                    format!("{}*", r)
+                }
+            },
+            Term::OneOrMore(expr) => {
+                let r = expr.gen();
+                if r.contains(" ") {
+                    format!("({})+", r)
+                } else {
+                    format!("{}+", r)
+                }
+            },
         }
     }
 }
@@ -51,19 +80,15 @@ impl Gen for Expr {
 
 impl Gen for Bind {
     fn gen(&self) -> String {
-        let name = if self.0 == "!comment" {
-            "COMMENT"
+        if self.0 == "!comment" {
+            format!("COMMENT = _{{ {} }}", self.1.clone().unwrap().gen())
         } else if self.0 == "!whitespace" {
-            "WHITESPACE"
+            format!("WHITESPACE = _{{ {} }}", self.1.clone().unwrap().gen())
+        } else if self.0.chars().nth(0).unwrap() == '_' {
+            format!("{} = @{{ {} }}", self.0, self.1.clone().unwrap().gen())
         } else {
-            self.0.as_str()
-        }.to_string();
-        let expr = if let Some(expr) = &self.1 {
-            expr.gen()
-        } else {
-            "UNDEFINED".to_string()
-        };
-        format!("{} = {{ {} }}", name, expr)
+            format!("{} = {{ {} }}", self.0, self.1.clone().unwrap().gen())
+        }
     }
 }
 
