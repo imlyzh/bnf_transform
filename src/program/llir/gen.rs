@@ -15,7 +15,12 @@ impl Gen for Term {
             Term::Option(expr) => {
                 let r = expr.gen();
                 if r.contains(" ") {
-                    format!("({})?", r)
+                    if  r.chars().nth(0).unwrap() == '(' &&
+                        r.chars().nth(r.len()-1).unwrap() == ')' {
+                        format!("{}?", r)
+                    } else {
+                        format!("({})?", r)
+                    }
                 } else {
                     format!("{}?", r)
                 }
@@ -35,7 +40,12 @@ impl Gen for Term {
             Term::Group(expr) => {
                 let r = expr.gen();
                 if r.contains(" ") {
-                    format!("({})", r)
+                    if  r.chars().nth(0).unwrap() == '(' &&
+                        r.chars().nth(r.len()-1).unwrap() == ')' {
+                        r
+                    } else {
+                        format!("({})", r)
+                    }
                 } else {
                     r
                 }
@@ -43,7 +53,12 @@ impl Gen for Term {
             Term::Repetition(expr) => {
                 let r = expr.gen();
                 if r.contains(" ") {
-                    format!("({})*", r)
+                    if  r.chars().nth(0).unwrap() == '(' &&
+                        r.chars().nth(r.len()-1).unwrap() == ')' {
+                        format!("{}*", r)
+                    } else {
+                        format!("({})*", r)
+                    }
                 } else {
                     format!("{}*", r)
                 }
@@ -51,7 +66,12 @@ impl Gen for Term {
             Term::OneOrMore(expr) => {
                 let r = expr.gen();
                 if r.contains(" ") {
-                    format!("({})+", r)
+                    if  r.chars().nth(0).unwrap() == '(' &&
+                        r.chars().nth(r.len()-1).unwrap() == ')' {
+                            format!("{}+", r)
+                    } else {
+                        format!("({})+", r)
+                    }
                 } else {
                     format!("{}+", r)
                 }
